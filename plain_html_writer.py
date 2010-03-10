@@ -65,4 +65,4 @@ def main():
     import sys
     from docutils.core import publish_parts
     text = sys.stdin.read()
-    print out_tmpl % publish_parts(text, writer=Writer()),
+    print (out_tmpl % publish_parts(text, writer=Writer())).encode('utf-8'),
