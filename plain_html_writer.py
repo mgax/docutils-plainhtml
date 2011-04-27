@@ -49,6 +49,45 @@ class HTMLTranslator(html4css1.HTMLTranslator, object):
     def depart_section(self, node):
         self.section_level -= 1
 
+    def visit_footnote(self, node):
+        self.body.append(self.starttag(node, 'section',
+                                       CLASS='docutils footnote'))
+        self.footnote_backrefs(node)
+
+    def footnote_backrefs(self, node):
+        backlinks = []
+        backrefs = node['backrefs']
+        if self.settings.footnote_backlinks and backrefs:
+            if len(backrefs) == 1:
+                self.context.append('')
+                self.context.append('</a>')
+                self.context.append('<a class="fn-backref" href="#%s">'
+                                    % backrefs[0])
+            else:
+                raise NotImplementedError # following block needs testing
+                i = 1
+                for backref in backrefs:
+                    backlinks.append('<a class="fn-backref" href="#%s">%s</a>'
+                                     % (backref, i))
+                    i += 1
+                self.context.append('<em>(%s)</em> ' % ', '.join(backlinks))
+                self.context += ['', '']
+        else:
+            self.context.append('')
+            self.context += ['', '']
+
+    def visit_label(self, node):
+        # Context added in footnote_backrefs.
+        self.body.append(self.starttag(node, 'p', '%s[' % self.context.pop()))
+
+    def depart_label(self, node):
+        # Context added in footnote_backrefs.
+        self.body.append(']%s\n%s' % (self.context.pop(), self.context.pop()))
+
+    def depart_footnote(self, node):
+        self.body.append('</p>\n'
+                         '</section>\n')
+
 out_tmpl = """<!doctype html>
 <html>
 <head>
