@@ -8,7 +8,7 @@ setup(
     author="Alex Morega",
     author_email="public@grep.ro",
     #packages=find_packages(),
-    modules=['plain_html_writer.py'],
+    py_modules=['plain_html_writer'],
     install_requires=['docutils'],
     entry_points={
         'console_scripts': [
